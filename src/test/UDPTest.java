@@ -3,8 +3,6 @@ import no.ntnu.server.Server;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -12,29 +10,31 @@ import static org.junit.Assert.*;
 
 public class UDPTest {
   EchoClient client;
+  Server server;
 
   /**
-   * How do I avoid throws? Using try/catch?
+   * Starts up the server and client before each test.
    * @throws SocketException
    * @throws UnknownHostException
    */
   @Before
-  public void setup() throws SocketException, UnknownHostException {
-    new Server().start();
-    client = new EchoClient();
+  public void setup() {
+    server = new Server(4445);
+    server.start();
+    client = new EchoClient("localHost", 4445);
   }
 
   @Test
-  public void whenCanSendAndReceivePacket_thenCorrect() throws IOException {
-    String echo = client.sendEcho("test");
+  public void sendAndReceivePackets() {
+    String echo = client.sendAndReceive("test");
     assertEquals("test", echo);
-    echo = client.sendEcho("server is working");
+    echo = client.sendAndReceive("server is working");
     assertNotEquals("test", echo);
   }
 
   @After
-  public void tearDown() throws IOException {
-    client.sendEcho("end");
+  public void tearDown() {
+    server.shutdown();
     client.close();
   }
 }
