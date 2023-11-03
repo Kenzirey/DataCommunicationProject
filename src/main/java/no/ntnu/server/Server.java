@@ -25,6 +25,7 @@ public class Server extends Thread {
     System.out.println("UDP Server is up and running on port " + SERVER_PORT);
 
     //Registering a shutdown hook to ensure graceful shutdown.
+    //TODO: implement a better shutdown method.
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       System.out.println(serverStopping);
       server.shutdown();

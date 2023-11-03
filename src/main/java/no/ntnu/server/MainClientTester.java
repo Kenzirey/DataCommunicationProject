@@ -15,7 +15,6 @@ public class MainClientTester {
 
   public static void main(String[] args) {
 
-    //Can use these to test all commands.
     sendCommandToServer("time");
 
     sendCommandToServer("name");
@@ -29,7 +28,7 @@ public class MainClientTester {
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
       socket.send(packet);
 
-      // Now receive the response
+      // Response
       byte[] receiveBuffer = new byte[1024];
       DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
       socket.receive(receivePacket);

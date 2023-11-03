@@ -10,7 +10,6 @@ import no.ntnu.command.Command;
 import no.ntnu.command.DateCommand;
 import no.ntnu.command.EchoCommand;
 import no.ntnu.command.NameCommand;
-import no.ntnu.command.PingCommand;
 import no.ntnu.command.TimeCommand;
 import no.ntnu.command.VersionCommand;
 
@@ -44,12 +43,12 @@ public class DatagramHandler {
     this.clientDatagram = clientDatagram;
 
     this.commandRegistry = new HashMap<>();
+    //Add commands to the command registry here.
     commandRegistry.put("version", new VersionCommand());
     commandRegistry.put("echo", new EchoCommand());
     commandRegistry.put("name", new NameCommand());
     commandRegistry.put("date", new DateCommand());
     commandRegistry.put("time", new TimeCommand());
-    commandRegistry.put("ping", new PingCommand());
   }
 
   /**
