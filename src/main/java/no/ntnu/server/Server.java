@@ -16,7 +16,7 @@ public class Server extends Thread {
   private DatagramSocket socket;
   private boolean running;
   private byte[] buffer = new byte[1024];
-  private static String serverStopping= "Server is shutting down..";
+  private static String serverStopping = "Server is shutting down..";
 
   public static void main(String[] args) {
     final Server server = new Server(SERVER_PORT);
