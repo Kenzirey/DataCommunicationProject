@@ -44,6 +44,7 @@ public class Server extends Thread {
   public void run() {
     running = true;
 
+    //TODO: look into who sends what.
     while (running) {
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
       try {

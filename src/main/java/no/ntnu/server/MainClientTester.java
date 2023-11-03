@@ -5,19 +5,20 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-public class CommandLineTestClient {
+/**
+ * A dummy client for testing various commands.
+ */
+public class MainClientTester {
 
-  private static final int SERVER_PORT = 4445; // Change this to your server's port
-  private static final String SERVER_ADDRESS = "localhost"; // Or your server's IP
+  private static final int SERVER_PORT = 4445;
+  private static final String SERVER_ADDRESS = "localhost";
 
   public static void main(String[] args) {
-    if (args.length == 0) {
-      System.out.println("Please provide a command to send. Example: 'echo Hello Server!'");
-      return;
-    }
 
-    String command = String.join(" ", args);
-    sendCommandToServer(command);
+    //Can use these to test all commands.
+    sendCommandToServer("time");
+
+    sendCommandToServer("name");
   }
 
   private static void sendCommandToServer(String command) {
