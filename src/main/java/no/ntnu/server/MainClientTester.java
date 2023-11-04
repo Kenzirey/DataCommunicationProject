@@ -5,19 +5,19 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-public class CommandLineTestClient {
+/**
+ * A dummy client for testing various commands.
+ */
+public class MainClientTester {
 
-  private static final int SERVER_PORT = 4445; // Change this to your server's port
-  private static final String SERVER_ADDRESS = "localhost"; // Or your server's IP
+  private static final int SERVER_PORT = 4445;
+  private static final String SERVER_ADDRESS = "localhost";
 
   public static void main(String[] args) {
-    if (args.length == 0) {
-      System.out.println("Please provide a command to send. Example: 'echo Hello Server!'");
-      return;
-    }
 
-    String command = String.join(" ", args);
-    sendCommandToServer(command);
+    sendCommandToServer("time");
+
+    sendCommandToServer("name");
   }
 
   private static void sendCommandToServer(String command) {
@@ -28,7 +28,7 @@ public class CommandLineTestClient {
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
       socket.send(packet);
 
-      // Now receive the response
+      // Response
       byte[] receiveBuffer = new byte[1024];
       DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
       socket.receive(receivePacket);
