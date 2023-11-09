@@ -12,8 +12,8 @@ import java.net.UnknownHostException;
  * A different attempt at a client.
  */
 public class EchoClient {
-  private DatagramSocket socket;
-  private InetAddress address;
+  private final DatagramSocket socket;
+  private final InetAddress address;
 
   private byte[] buffer;
   private static final int BUFFER_SIZE = 1024;

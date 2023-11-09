@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class MainClientTester {
 
-  private static final int SERVER_PORT = 4445;
+  private static final int SERVER_PORT = 12345;
   private static final String SERVER_ADDRESS = "localhost";
 
   public static void main(String[] args) {
