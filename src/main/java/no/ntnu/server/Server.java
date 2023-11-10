@@ -17,7 +17,7 @@ public class Server extends Thread {
   //TODO: make a shutdown() command or "end"?
 
   //TODO: implement logic to allow adding multiple clients?
-  private static final int SERVER_PORT = 12345;
+  private static final int SERVER_PORT = 12346;
   private final DatagramSocket socket;
   private boolean running;
   private final byte[] buffer = new byte[1024];
