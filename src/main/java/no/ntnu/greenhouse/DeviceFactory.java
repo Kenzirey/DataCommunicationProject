@@ -30,10 +30,12 @@ public class DeviceFactory {
    * @param windowCount            Number of windows the device is connected to
    * @param fanCount               Number of fans the device is connected to
    * @param heaterCount            Number of heaters the device is connected to
+   * @param doorLockCount          Number of door locks the device is connected to
+   *
    * @return The created sensor/actuator device, with a unique ID
    */
   public static SensorActuatorNode createNode(int temperatureSensorCount, int humiditySensorCount,
-                                              int windowCount, int fanCount, int heaterCount) {
+                                              int windowCount, int fanCount, int heaterCount, int doorLockCount) {
     SensorActuatorNode node = new SensorActuatorNode(generateUniqueNodeId());
     if (temperatureSensorCount > 0) {
       node.addSensors(DeviceFactory.createTemperatureSensor(), temperatureSensorCount);
@@ -49,6 +51,9 @@ public class DeviceFactory {
     }
     if (heaterCount > 0) {
       addActuators(node, DeviceFactory.createHeater(node.getId()), heaterCount);
+    }
+    if (doorLockCount > 0) {
+      addActuators(node, DeviceFactory.createDoorLock(node.getId()), doorLockCount);
     }
     return node;
   }
@@ -123,6 +128,20 @@ public class DeviceFactory {
     actuator.setImpact(SENSOR_TYPE_TEMPERATURE, 4.0);
     return actuator;
   }
+
+  /**
+   * Create a door lock
+   *
+   * @param nodeId ID of the node to which this actuator will be connected
+   * @return The door lock actuator
+   */
+  public static Actuator createDoorLock(int nodeId) {
+    Actuator actuator = new Actuator("Door Lock", nodeId);
+    actuator.setImpact(SENSOR_TYPE_TEMPERATURE, -2.0);
+    return actuator;
+
+  }
+
 
   /**
    * Generate a random value within the range [x-d; x+d].
