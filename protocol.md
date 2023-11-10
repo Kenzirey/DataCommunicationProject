@@ -16,27 +16,52 @@ distributed application.
 * Graphical User Interface (GUI) - A graphical interface where users of the system can interact with
   it.
 
-## The underlying transport protocol
+## The underlying transport protocol used: UDP (User Datagram Protocol)
 
-TODO - what transport-layer protocol do you use? TCP? UDP? What port number(s)? Why did you 
-choose this transport layer protocol?
+For this greenhouse project, UDP was chosen over TCP as the transport-layer protocol.
+
+### Why UDP over TCP?
+1. Real-time tracking: The greenhouse system requires real-time tracking of environmental variables
+such as temperature and humidity. UDP's low-latency data transmission is more suited for real-time updates,
+where receiving outdated packets is less critical than ensuring a continuous stream flow of data. Temperature
+and humidity values do not change rapidly, so it is not necessary to ensure that every single packet is received.
+2. Bandwidth: UDP uses less bandwidth to send data, due to smaller header size, no handshake required, or maintain connection state information. 
+Thus, UDP is more resource-efficient for our use case, where sensor nodes will be sending data to the control panel nodes frequently, requiring a fast protocol.
+Being resource-efficient and fast is important for a lightweight system like the greenhouse project, which may run on limited-resource devices (in this case, one server).
+3. Simplicity: the Greenhouse application involves sending many small packets of data, such as sensor readings, switch statuses, actuator updates etc. 
+UDP's simplicity allows for these small packets of data to be sent without the overhead of establishing and maintaining a connection.
+
+
+### The port number(s):
+* 12345 - used for communication between sensor/actuator nodes and control-panel nodes.
 
 ## The architecture
-
+Emma write this part
 TODO - show the general architecture of your network. Which part is a server? Who are clients? 
-Do you have one or several servers? Perhaps include a picture here. 
+Do you have one or several servers? Perhaps include a picture here.
 
 
 ## The flow of information and events
-
+Robert?
 TODO - describe what each network node does and when. Some periodic events? Some reaction on 
 incoming packets? Perhaps split into several subsections, where each subsection describes one 
 node type (For example: one subsection for sensor/actuator nodes, one for control panel nodes).
 
 ## Connection and state
 
-TODO - is your communication protocol connection-oriented or connection-less? Is it stateful or 
-stateless? 
+#### Connection-less
+* The communication protocol is based on UDP, which is a connection-less protocol. 
+This means that the sensors and actuators do not need to establish a connection with the control panel nodes before exchanging data.
+Each packet of data is sent independently of each other, with no formal session between sender and receiver. This allows for flexible communication,
+where packets can be broadcast to multiple devices without the overhead of managing multiple connections.
+# Work in progress: Make sure that at the end, the communication protocol stays active to this description.
+
+#### Stateless
+* The greenhouse system is stateless, as each request is processed independently, and is not tracked, 
+nor is the data maintained for later use. The server does not include any methods for tracking user sessions, or storing its session state.
+DatagramSocket that is used for packet delivery, is designed for connectionless delivery, 
+which reinforces the stateless nature of the greenhouse server.
+In addition, each packet has the standard response per request, and is not altered based on previous interactions.
 
 ## Types, constants
 

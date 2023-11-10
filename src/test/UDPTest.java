@@ -1,3 +1,4 @@
+import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.EchoClient;
 import no.ntnu.server.Server;
 import org.junit.After;
@@ -19,15 +20,16 @@ public class UDPTest {
    */
   @Before
   public void setup() {
-    server = new Server(4445);
+    boolean fake = false;
+    server = new Server(4445, new GreenhouseSimulator(fake));
     server.start();
     client = new EchoClient("localHost", 4445);
   }
 
   @Test
   public void sendAndReceivePackets() {
-    String echo = client.sendAndReceive("test");
-    assertEquals("test", echo);
+    String echo = client.sendAndReceive("name");
+    assertEquals("UDP Server", echo);
     echo = client.sendAndReceive("server is working");
     assertNotEquals("test", echo);
   }

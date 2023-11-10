@@ -1,5 +1,7 @@
 package no.ntnu.server;
 
+import no.ntnu.greenhouse.GreenhouseSimulator;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,14 +17,16 @@ public class Server extends Thread {
   //TODO: make a shutdown() command or "end"?
 
   //TODO: implement logic to allow adding multiple clients?
-  private static final int SERVER_PORT = 4445;
-  private DatagramSocket socket;
+  private static final int SERVER_PORT = 12345;
+  private final DatagramSocket socket;
   private boolean running;
-  private byte[] buffer = new byte[1024];
-  private static String serverStopping = "Server is shutting down..";
+  private final byte[] buffer = new byte[1024];
+  private static final String serverStopping = "Server is shutting down..";
+  private final GreenhouseSimulator greenhouseSimulator;
 
+  //TODO: Remove main method when GreenhouseSimulator starts it instead.
   public static void main(String[] args) {
-    final Server server = new Server(SERVER_PORT);
+    final Server server = new Server(SERVER_PORT, new GreenhouseSimulator(false));
     //TODO: discuss multithreading.
 
     //run() is invoked when you call start on a server object.
@@ -44,7 +48,8 @@ public class Server extends Thread {
    * which opens a DatagramSocket to listen for incoming packets.
    * @param port the port number to listen on for packets.
    */
-  public Server(int port) {
+  public Server(int port, GreenhouseSimulator greenhouseSimulator) {
+    this.greenhouseSimulator = greenhouseSimulator;
     //This starts up when start() method is called.
     try {
       socket = new DatagramSocket(port);
@@ -72,7 +77,7 @@ public class Server extends Thread {
         //
         handleRequest(received, packet);
       } catch (IOException e) {
-        // If socket is closed and server is no longer running, breaks the while(running) loop.
+        //If socket is closed and server is no longer running, break the out of the loop.
         if (socket.isClosed() && !running) {
           break;
         }
@@ -109,6 +114,7 @@ public class Server extends Thread {
     //Handles the command received in the packet from client.
     DatagramHandler handler = new DatagramHandler(socket, packet);
     handler.run();
+    //TODO: greenhouseSimulator.updateNodeWithCommand(message);
   }
 
 
