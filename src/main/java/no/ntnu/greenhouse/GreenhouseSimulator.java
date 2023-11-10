@@ -72,7 +72,6 @@ public class GreenhouseSimulator {
   private void initiateRealCommunication() {
     this.server = new Server(12345, this);
     server.start();
-    //TODO: Test that this works as intended.
   }
 
   private void initiateFakePeriodicSwitches() {
@@ -96,7 +95,6 @@ public class GreenhouseSimulator {
         periodicSwitch.stop();
       }
     } else {
-      //TODO: test and improve this method.
       if (server != null) {
         server.shutdown();
       }
