@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import no.ntnu.gui.greenhouse.NodeGuiWindow;
 import no.ntnu.listeners.greenhouse.NodeStateListener;
 import no.ntnu.server.Server;
 import no.ntnu.tools.Logger;
@@ -110,5 +111,9 @@ public class GreenhouseSimulator {
     for (SensorActuatorNode node : nodes.values()) {
       node.addStateListener(listener);
     }
+  }
+
+  public Map<Integer, SensorActuatorNode> getNodes (){
+    return nodes;
   }
 }
