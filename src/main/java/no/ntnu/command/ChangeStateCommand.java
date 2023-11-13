@@ -17,10 +17,11 @@ public class ChangeStateCommand implements Command {
     @Override
     public String execute(String[] args) {
         /*
-           Check if Actuator with ID and Type exists
-           Check if Actuator is already on that State
-           Change State
-           Return Succesful Change
+            Check if Node exists
+            Check if Actuator with ID exists on that Node
+            Check if Actuator is already on that State
+            Change State
+            Return Succesful Change
          */
         GreenhouseSimulator gs = new GreenhouseSimulator(true);
         Map<Integer, SensorActuatorNode> mapNodes = gs.getNodes();
