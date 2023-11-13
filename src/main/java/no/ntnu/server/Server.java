@@ -112,4 +112,8 @@ public class Server extends Thread {
     socket.close();
     System.out.println(serverStopping);
   }
+
+  public int getServerPort() {
+    return SERVER_PORT;
+  }
 }

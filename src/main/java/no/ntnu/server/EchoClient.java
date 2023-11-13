@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 /**
  * A different attempt at a client.
+ * Will delete this, because communication channel is the client.
  */
 public class EchoClient {
   private final DatagramSocket socket;
