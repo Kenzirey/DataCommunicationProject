@@ -26,16 +26,10 @@ public class Server extends Thread {
   //TODO: Remove main method when GreenhouseSimulator starts it instead.
   public static void main(String[] args) {
     final Server server = new Server(SERVER_PORT, new GreenhouseSimulator(false));
-    //TODO: discuss multithreading.
 
     //run() is invoked when you call start on a server object.
     server.start();
     System.out.println("UDP Server is up and running on port " + SERVER_PORT);
-
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      System.out.println(serverStopping);
-      server.shutdown();
-    }));
 
   }
 

@@ -33,16 +33,17 @@ UDP's simplicity allows for these small packets of data to be sent without the o
 
 
 ### The port number(s):
-* 12345 - used for communication between sensor/actuator nodes and control-panel nodes.
+* 12346 - used for communication between sensor/actuator nodes and control-panel nodes.
 
 ## The architecture
 Emma write this part
 TODO - show the general architecture of your network. Which part is a server? Who are clients? 
 Do you have one or several servers? Perhaps include a picture here.
+# TODO: Write this when we have commands and such set up with the Server.
 
 
 ## The flow of information and events
-Robert?
+# Robert?
 TODO - describe what each network node does and when. Some periodic events? Some reaction on 
 incoming packets? Perhaps split into several subsections, where each subsection describes one 
 node type (For example: one subsection for sensor/actuator nodes, one for control panel nodes).
