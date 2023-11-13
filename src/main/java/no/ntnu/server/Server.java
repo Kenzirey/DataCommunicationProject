@@ -16,7 +16,7 @@ public class Server extends Thread implements ServerMessageListener {
 
   //TODO: implement logic to allow adding multiple clients?
   private static final int SERVER_PORT = 12346;
-  private final UdpCommunicationChannel udpChannel;
+  private UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
   private static final String serverStopping = "Server is shutting down..";
@@ -27,7 +27,7 @@ public class Server extends Thread implements ServerMessageListener {
             message -> System.out.println("Received message: " + message);
 
     // Create the server instance with the test listener
-    Server server = new Server(12346, messageListener);
+    Server server = new Server(SERVER_PORT, messageListener);
     server.start();
 
   }
@@ -52,19 +52,28 @@ public class Server extends Thread implements ServerMessageListener {
   public void run() {
     running = true;
 
-    while (running) {
+    while (running && !udpChannel.isSocketClosed()) {
       try {
         DatagramPacket packet = udpChannel.receivePacket();
+        if (packet == null) {
+          throw new NullPointerException("Packet is null");
+        }
 
         handleRequest(new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8), packet);
       } catch (IOException e) {
-        if (!running) {
+        if (!running || udpChannel.isSocketClosed()) {
           break;
         }
         System.err.println("Error processing packet: " + e.getMessage());
       }
     }
-    udpChannel.closeSocket();
+    //TODO: Document synchronized.
+    synchronized (this) {
+      udpChannel.closeSocket();
+      notifyAll();
+      //Had problems with server trying to receive packets on a closed socket.
+      System.out.println("Socket closed.");
+    }
   }
 
 
@@ -100,8 +109,8 @@ public class Server extends Thread implements ServerMessageListener {
    * Shuts down the server.
    */
   public void shutdown() {
-    running = false;
-    udpChannel.closeSocket();
+    this.running = false;
+    this.udpChannel.closeSocket();
     System.out.println(serverStopping);
   }
 
@@ -122,5 +131,21 @@ public class Server extends Thread implements ServerMessageListener {
   @Override
   public void onMessageReceived(String message) {
    //Empty on purpose - Server does not process messages itself.
+  }
+
+  /**
+   * Returns true if the server is running, false otherwise.
+   * @return true if the server is running, false otherwise.
+   */
+  public boolean isRunning() {
+    if (this.running == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public void setCommunicationChannel(UdpCommunicationChannel testChannel) {
+    this.udpChannel = testChannel;
   }
 }

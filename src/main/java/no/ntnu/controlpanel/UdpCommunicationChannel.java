@@ -17,6 +17,8 @@ public class UdpCommunicationChannel implements CommunicationChannel {
   private DatagramSocket socket;
   private InetAddress serverAddress;
   private int serverPort;
+  //TODO: Document why socketClosed is used.
+  private volatile boolean socketClosed = false;
 
   /**
    * Create a new UDP communication channel.
@@ -48,6 +50,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
    * @throws IOException input/output exception.
    */
   public DatagramPacket receivePacket() throws IOException {
+    //TODO: Discuss buffer size, is this enough? Or too much?
     byte[] buffer = new byte[1024];
     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
     socket.receive(packet);
@@ -100,6 +103,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
   public void closeSocket() {
     if (socket != null && !socket.isClosed()) {
       socket.close();
+      socketClosed = true;
     }
   }
 
@@ -125,6 +129,10 @@ public class UdpCommunicationChannel implements CommunicationChannel {
     } else {
       throw new SocketException("Socket is closed or not initialized");
     }
+  }
+
+  public boolean isSocketClosed() {
+    return this.socketClosed;
   }
   //TODO: separate thread or listener for the sending and receiving?
 }
