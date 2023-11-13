@@ -61,7 +61,7 @@ public class DatagramHandler {
 
     String[] commandParts = command.split(" ", 2);
     if (commandParts.length >= 1) {
-      String commandType = commandParts[0].toLowerCase();  // Handle case insensitivity
+      String commandType = commandParts[0].toLowerCase();
       Command cmd = commandRegistry.get(commandType);
       if (cmd != null) {
         String response = cmd.execute(Arrays.copyOfRange(commandParts, 1, commandParts.length));

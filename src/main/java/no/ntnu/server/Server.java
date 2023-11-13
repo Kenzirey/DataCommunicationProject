@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
  * and send a response back to the client.
  */
 public class Server extends Thread {
-  //TODO: make a shutdown() command or "end"?
 
   //TODO: implement logic to allow adding multiple clients?
   private static final int SERVER_PORT = 12346;
@@ -27,19 +26,10 @@ public class Server extends Thread {
   //TODO: Remove main method when GreenhouseSimulator starts it instead.
   public static void main(String[] args) {
     final Server server = new Server(SERVER_PORT, new GreenhouseSimulator(false));
-    //TODO: discuss multithreading.
 
     //run() is invoked when you call start on a server object.
-    //This starts the server loop while(running).
     server.start();
     System.out.println("UDP Server is up and running on port " + SERVER_PORT);
-
-    //Registering a shutdown hook to ensure graceful shutdown.
-    //TODO: implement a better shutdown method.
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      System.out.println(serverStopping);
-      server.shutdown();
-    }));
 
   }
 
@@ -98,9 +88,7 @@ public class Server extends Thread {
    * @throws IOException input/output exception .
    */
   private void handleRequest(String message, DatagramPacket packet) throws IOException {
-    //TODO: look more into what this does.
     if ("end".equals(message)) {
-      //"end" will trigger shutdown for server.
       byte[] responseData = serverStopping.getBytes(StandardCharsets.UTF_8);
       DatagramPacket responseDatagram = new DatagramPacket(responseData, responseData.length,
               packet.getAddress(), packet.getPort());
@@ -110,14 +98,11 @@ public class Server extends Thread {
       running = false;
       return;
     }
-
     //Handles the command received in the packet from client.
     DatagramHandler handler = new DatagramHandler(socket, packet);
     handler.run();
     //TODO: greenhouseSimulator.updateNodeWithCommand(message);
   }
-
-
 
   /**
    * Shuts down the server.
