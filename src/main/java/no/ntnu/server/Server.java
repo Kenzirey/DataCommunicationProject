@@ -19,17 +19,12 @@ public class Server extends Thread implements ServerMessageListener {
   private final UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
-  private final byte[] buffer = new byte[1024];
   private static final String serverStopping = "Server is shutting down..";
   private ServerMessageListener messageListener;
   public static void main(String[] args) {
     // Simple implementation of ServerMessageListener for testing
-    ServerMessageListener messageListener = new ServerMessageListener() {
-      @Override
-      public void onMessageReceived(String message) {
-        System.out.println("Received message: " + message);
-      }
-    };
+    ServerMessageListener messageListener =
+            message -> System.out.println("Received message: " + message);
 
     // Create the server instance with the test listener
     Server server = new Server(12346, messageListener);
@@ -50,7 +45,8 @@ public class Server extends Thread implements ServerMessageListener {
   }
 
   /**
-   * Starts server loop and processed incoming datagram packets.
+   * Starts server loop and processes incoming datagram packets.
+   * Keeps running until "running" becomes false, then shuts down the socket.
    */
   @Override
   public void run() {
@@ -68,7 +64,6 @@ public class Server extends Thread implements ServerMessageListener {
         System.err.println("Error processing packet: " + e.getMessage());
       }
     }
-
     udpChannel.closeSocket();
   }
 
@@ -110,12 +105,22 @@ public class Server extends Thread implements ServerMessageListener {
     System.out.println(serverStopping);
   }
 
+  /**
+   * Returns the set server port.
+   *
+   * @return the server port.
+   */
   public int getServerPort() {
     return SERVER_PORT;
   }
 
+  /**
+   * ServerMessageListener interface method.
+   * To update the GreenhouseSimulator with the received message.
+   * @param message the received message.
+   */
   @Override
   public void onMessageReceived(String message) {
-   //TODO: what to do here
+   //Empty on purpose - Server does not process messages itself.
   }
 }
