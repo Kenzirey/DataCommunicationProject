@@ -6,14 +6,13 @@ import java.nio.charset.StandardCharsets;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
 import no.ntnu.greenhouse.GreenhouseSimulator;
-import no.ntnu.server.serverListener.ServerMessageListener;
 
 /**
  * A UDP server that listens for incoming datagram packets.
  * The server will process the incoming packets,
  * and send a response back to the client.
  */
-public class Server extends Thread implements ServerMessageListener {
+public class Server extends Thread {
 
   //TODO: implement logic to allow adding multiple clients?
   private static final int SERVER_PORT = 12346;
@@ -127,17 +126,6 @@ public class Server extends Thread implements ServerMessageListener {
    */
   public int getServerPort() {
     return SERVER_PORT;
-  }
-
-  /**
-   * ServerMessageListener interface method.
-   * To update the GreenhouseSimulator with the received message.
-   *
-   * @param message the received message.
-   */
-  @Override
-  public void onMessageReceived(String message) {
-   //Empty on purpose - Server does not process messages itself.
   }
 
   /**
