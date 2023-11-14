@@ -7,13 +7,12 @@ import java.util.Map;
 
 import no.ntnu.listeners.greenhouse.NodeStateListener;
 import no.ntnu.server.Server;
-import no.ntnu.server.ServerMessageListener;
 import no.ntnu.tools.Logger;
 
 /**
  * Application entrypoint - a simulator for a greenhouse.
  */
-public class GreenhouseSimulator implements ServerMessageListener {
+public class GreenhouseSimulator {
   private final Map<Integer, SensorActuatorNode> nodes = new HashMap<>();
 
   private final List<PeriodicSwitch> periodicSwitches = new LinkedList<>();
@@ -29,10 +28,6 @@ public class GreenhouseSimulator implements ServerMessageListener {
    */
   public GreenhouseSimulator(boolean fake) {
     this.fake = fake;
-  }
-
-  public void onMessageReceived(String message) {
-    Logger.info("Received message: " + message);
   }
 
   /**
