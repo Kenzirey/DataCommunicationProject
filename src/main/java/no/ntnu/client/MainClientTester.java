@@ -1,4 +1,6 @@
-package no.ntnu.server;
+package no.ntnu.client;
+
+import no.ntnu.server.Server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
