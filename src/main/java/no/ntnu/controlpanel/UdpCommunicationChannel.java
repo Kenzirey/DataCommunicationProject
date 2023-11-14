@@ -66,9 +66,11 @@ public class UdpCommunicationChannel implements CommunicationChannel {
    */
   @Override
   public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
-    String message = "Node: " + nodeId + ", Actuator: " + actuatorId + ", State: " + (isOn ? "ON" : "OFF");
+    String message =
+            "Node: " + nodeId + ", Actuator: " + actuatorId + ", State: " + (isOn ? "ON" : "OFF");
     byte[] sendData = message.getBytes();
-    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
+    DatagramPacket sendPacket =
+            new DatagramPacket(sendData, sendData.length, serverAddress, serverPort);
 
     try {
       socket.send(sendPacket);
@@ -124,7 +126,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
    * @throws IOException input/output exception.
    */
   public void sendPacket(DatagramPacket packet) throws IOException {
-    if (socket != null && !socket.isClosed()) {
+    if (socket != null && !socket.isClosed() && packet!= null) {
       socket.send(packet);
     } else {
       throw new SocketException("Socket is closed or not initialized");
