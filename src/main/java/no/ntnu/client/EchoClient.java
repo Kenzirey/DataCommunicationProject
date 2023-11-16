@@ -1,4 +1,4 @@
-package no.ntnu.server;
+package no.ntnu.client;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

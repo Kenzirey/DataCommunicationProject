@@ -1,6 +1,7 @@
 import no.ntnu.controlpanel.UdpCommunicationChannel;
+import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.Server;
-import no.ntnu.server.ServerMessageListener;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -10,32 +11,47 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ServerTest {
+  Server server;
+  @BeforeEach
+    void setUp() {
+    this.server = new Server(12346, new GreenhouseSimulator(false));
+    }
 
-  //TODO: PACKET IS STILL NULL, WHY? Fix this.
+
+
+  //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
   @Test
-  void testServerInitialization() {
-    UdpCommunicationChannel mockChannel = Mockito.mock(UdpCommunicationChannel.class);
-    ServerMessageListener mockListener = Mockito.mock(ServerMessageListener.class);
-
-    Server server = new Server(12346, mockListener);
+  void testServerInitialization() throws InterruptedException {
+    this.server.start();
+    //Makes sure port is correctly displayed/gathered.
     assertEquals(12346, server.getServerPort());
-    // Additional assertions as needed
+    //Makes sure the server is actually running.
+    synchronized(server) {
+      server.wait(20);
+    }
+    assertTrue(server.isRunning());
+
+    //Shutdown after test.
+    server.shutdown();
   }
 
-
   @Test
-  void testServerRun() throws IOException {
+  void testServerRun() throws IOException, InterruptedException {
     UdpCommunicationChannel mockChannel = Mockito.mock(UdpCommunicationChannel.class);
-    ServerMessageListener mockListener = Mockito.mock(ServerMessageListener.class);
 
     //Server setup:
-    Server server = new Server(12346, mockListener);
+    server.setCommunicationChannel(mockChannel);
+    server.start();
+    synchronized(server) {
+      server.wait(20);
+    }
+    assertTrue(server.isRunning());
 
 
+    //Mock messages & data.
     String mockMessage = "Test Message";
     byte[] mockData = mockMessage.getBytes(StandardCharsets.UTF_8);
     InetAddress mockAddress = InetAddress.getByName("localhost");
@@ -47,38 +63,37 @@ class ServerTest {
     //Mockito setup:
     when(mockChannel.receivePacket()).thenReturn(mockPacket);
 
-    // Start the server in a separate thread
-    new Thread(server).start();
-
-    // Additional logic to simulate a client sending a packet and verifying the server's response
-
-    // Shut down the server for clean-up
+    //Shutdown server after test is done.
     server.shutdown();
-  }
-
-  @Test
-  public void testShutdown() throws InterruptedException {
-    UdpCommunicationChannel mockChannel = Mockito.mock(UdpCommunicationChannel.class);
-    ServerMessageListener mockListener = Mockito.mock(ServerMessageListener.class);
-
-    Server server = new Server(12346, mockListener);
-    server.setCommunicationChannel(mockChannel);
-    server.start();
-    server.shutdown();
+    synchronized(server) {
+      server.wait(20);
+    }
     server.join();
-
-    // Verify that the channel's closeSocket method was called
-    verify(mockChannel).closeSocket();
+    assertFalse(server.isRunning());
   }
 
   /**
-   * Checks to see if the server shuts down as it is supposed to.
+   * Tests the shutdown method,
+   * using synchronized to make sure the server is running before the assertion is made.
+   *
+   * @throws InterruptedException if the thread is interrupted.
    */
   @Test
-  void testServerShutdown() {
-    ServerMessageListener mockListener = Mockito.mock(ServerMessageListener.class);
-    Server server = new Server(12346, mockListener);
+  void testShutdown() throws InterruptedException {
+    server.start();
+
+    //Synchronized to make sure the server is running before the assertion is made.
+    synchronized(server) {
+      server.wait(20);
+    }
+    assertTrue(server.isRunning());
+
     server.shutdown();
+    //To make sure shutdown is run before next assertion.
+    synchronized(server) {
+      server.wait(20);
+    }
+    server.join();
     assertFalse(server.isRunning());
   }
 }

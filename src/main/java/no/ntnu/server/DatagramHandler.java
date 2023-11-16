@@ -57,7 +57,6 @@ public class DatagramHandler {
    * @param command the command string from the client.
    */
   private void handleCommand(String command) {
-    //TODO: discuss these System.out.println() statements.
     System.out.println("Command from the client: " + command);
 
     String[] commandParts = command.split(" ", 2);
