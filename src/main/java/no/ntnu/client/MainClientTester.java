@@ -1,4 +1,6 @@
-package no.ntnu.server;
+package no.ntnu.client;
+
+import no.ntnu.server.Server;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -10,7 +12,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class MainClientTester {
 
-  private static final int SERVER_PORT = 12345;
+  private static Server server;
   private static final String SERVER_ADDRESS = "localhost";
 
   public static void main(String[] args) {
@@ -25,7 +27,7 @@ public class MainClientTester {
       byte[] buffer;
 
       buffer = command.getBytes(StandardCharsets.UTF_8);
-      DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
+      DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), server.getServerPort());
       socket.send(packet);
 
       // Response

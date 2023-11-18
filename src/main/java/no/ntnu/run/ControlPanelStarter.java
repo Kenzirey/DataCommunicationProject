@@ -3,8 +3,18 @@ package no.ntnu.run;
 import no.ntnu.controlpanel.CommunicationChannel;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.FakeCommunicationChannel;
+import no.ntnu.controlpanel.SocketCommunicationChannel;
 import no.ntnu.gui.controlpanel.ControlPanelApplication;
 import no.ntnu.tools.Logger;
+
+import java.io.BufferedReader;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 /**
  * Starter class for the control panel.
@@ -13,6 +23,11 @@ import no.ntnu.tools.Logger;
  */
 public class ControlPanelStarter {
   private final boolean fake;
+  private static final String SERVER_HOST = "localhost";
+  private Socket socket;
+  private BufferedReader socketReader;
+  private ObjectOutputStream objectWriter;
+
 
   public ControlPanelStarter(boolean fake) {
     this.fake = fake;
@@ -55,11 +70,18 @@ public class ControlPanelStarter {
   }
 
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
-    // TODO - here you initiate TCP/UDP socket communication
-    // You communication class(es) may want to get reference to the logic and call necessary
-    // logic methods when events happen (for example, when sensor data is received)
-    return null;
+    try {
+      socket = new Socket(SERVER_HOST, 12346);
+      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      objectWriter = new ObjectOutputStream(socket.getOutputStream());
+
+      return new SocketCommunicationChannel(logic, socket, socketReader, objectWriter);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
+
 
   private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
     // Here we pretend that some events will be received with a given delay
@@ -89,6 +111,17 @@ public class ControlPanelStarter {
   }
 
   private void stopCommunication() {
-    // TODO - here you stop the TCP/UDP socket communication
+      try {
+        if (socket != null) {
+          socket.close();
+          System.out.println("Socket closed");
+        } else {
+          System.err.println("Can't close a socket which has not been open");
+        }
+      } catch (IOException e) {
+        System.err.println("Could not close the socket: " + e.getMessage());
+      }
+    }
+
+    //TODO TEST THIS
   }
-}
