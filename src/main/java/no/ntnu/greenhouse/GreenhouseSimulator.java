@@ -20,6 +20,8 @@ public class GreenhouseSimulator {
   private final boolean fake;
   private Server server;
 
+  private static GreenhouseSimulator instance;
+
 
   /**
    * Create a greenhouse simulator.
@@ -113,7 +115,16 @@ public class GreenhouseSimulator {
     }
   }
 
+  //small getter of the nodes
   public Map<Integer, SensorActuatorNode> getNodes (){
     return nodes;
+  }
+
+  //needed to retrieve the instance of the Greenhouse
+  public static GreenhouseSimulator getInstance(boolean fake) {
+    if (instance == null) {
+      instance = new GreenhouseSimulator(fake);
+    }
+    return instance;
   }
 }
