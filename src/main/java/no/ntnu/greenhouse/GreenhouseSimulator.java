@@ -73,7 +73,7 @@ public class GreenhouseSimulator {
   }
 
   private void initiateRealCommunication() {
-    this.server = new Server(12346, this);
+    this.server = new Server(12346);
     server.start();
   }
 

@@ -18,7 +18,7 @@ public class MainClientTester {
 
   public static void main(String[] args) {
 
-    server = new Server(12346, new GreenhouseSimulator(false)); // Adjust the port and parameters as needed
+    server = new Server(12346); // Adjust the port and parameters as needed
     server.start();
     System.out.println("Server started.");
     synchronized (server) {

@@ -25,7 +25,6 @@ public class Server extends Thread {
   private DatagramSocket udpSocket;
   private ServerSocket serverSocket;
   private static final String SERVER_STOPPING = "Server is shutting down..";
-  private final GreenhouseSimulator greenhouseSimulator;
 
   /**
    * Creates an instance of server with a default port and listener.
@@ -34,7 +33,7 @@ public class Server extends Thread {
    */
   public static void main(String[] args) {
     // Create the server instance with the test listener
-    final Server server = new Server(SERVER_PORT, new GreenhouseSimulator(false));
+    final Server server = new Server(SERVER_PORT);
     server.start();
     System.out.println("Server started on port " + SERVER_PORT);
 
@@ -44,8 +43,7 @@ public class Server extends Thread {
    * Constructs a new server instance,
    * which opens a DatagramSocket to listen for incoming packets.
    */
-  public Server(int serverPort, GreenhouseSimulator greenhouseSimulator) {
-    this.greenhouseSimulator = greenhouseSimulator;
+  public Server(int serverPort) {
     this.controlPanelLogic = new ControlPanelLogic();
     this.udpChannel = new UdpCommunicationChannel(controlPanelLogic, "localhost", serverPort);
     this.controlPanelLogic.setCommunicationChannel(udpChannel);
