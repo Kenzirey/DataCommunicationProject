@@ -14,6 +14,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -24,7 +25,9 @@ import java.net.Socket;
 public class ControlPanelStarter {
   private final boolean fake;
   private static final String SERVER_HOST = "localhost";
+  private static final int TCP_PORT = 12346;
   private Socket socket;
+  private ServerSocket serverSocket;
   private BufferedReader socketReader;
   private ObjectOutputStream objectWriter;
 
@@ -71,7 +74,7 @@ public class ControlPanelStarter {
 
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
     try {
-      socket = new Socket(SERVER_HOST, 12346);
+      socket = new Socket(SERVER_HOST, TCP_PORT);
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       objectWriter = new ObjectOutputStream(socket.getOutputStream());
 
