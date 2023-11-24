@@ -7,6 +7,11 @@ import java.util.Objects;
 
 public class GetValueCommand implements Command {
 
+    /*
+    Command Example
+    getValue, NodeID, SensorID
+    changeState on fan 3
+     */
     @Override
     public String execute(String[] args) {
         GreenhouseSimulator gs = GreenhouseSimulator.getInstance(true);
@@ -14,13 +19,11 @@ public class GetValueCommand implements Command {
         assert node != null;
         Sensor sensor = getElementsFromString.getSensorFromString(args[3], node);
 
-        boolean boolIsOn = Objects.equals(args[1], "on");
-
         if (node != null && sensor != null) {
             SensorReading reading = sensor.getReading();
 
             System.out.printf("Reading from Sensor ID %s on Node %s: %s %s",
-                    args[3], args[2], sensor.getType(), sensor.getReading().getValue());
+                    args[2], args[1], sensor.getType(), sensor.getReading().getValue());
 
         }
 

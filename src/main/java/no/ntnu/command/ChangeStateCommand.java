@@ -9,6 +9,11 @@ import java.util.Objects;
 
 public class ChangeStateCommand implements Command {
 
+    /*
+    Command Example
+    changeState, State (on, off), NodeID, SensorID
+    changeState on fan 3
+     */
     @Override
     public String execute(String[] args) {
         GreenhouseSimulator gs = GreenhouseSimulator.getInstance(true);
