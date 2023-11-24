@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import no.ntnu.gui.greenhouse.NodeGuiWindow;
 import no.ntnu.listeners.greenhouse.NodeStateListener;
 import no.ntnu.server.Server;
 import no.ntnu.tools.Logger;
@@ -18,6 +19,8 @@ public class GreenhouseSimulator {
   private final List<PeriodicSwitch> periodicSwitches = new LinkedList<>();
   private final boolean fake;
   private Server server;
+
+  private static GreenhouseSimulator instance;
 
 
   /**
@@ -110,5 +113,18 @@ public class GreenhouseSimulator {
     for (SensorActuatorNode node : nodes.values()) {
       node.addStateListener(listener);
     }
+  }
+
+  //small getter of the nodes
+  public Map<Integer, SensorActuatorNode> getNodes (){
+    return nodes;
+  }
+
+  //needed to retrieve the instance of the Greenhouse
+  public static GreenhouseSimulator getInstance(boolean fake) {
+    if (instance == null) {
+      instance = new GreenhouseSimulator(fake);
+    }
+    return instance;
   }
 }

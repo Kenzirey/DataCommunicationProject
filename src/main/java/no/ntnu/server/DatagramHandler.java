@@ -6,12 +6,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import no.ntnu.command.Command;
-import no.ntnu.command.DateCommand;
-import no.ntnu.command.EchoCommand;
-import no.ntnu.command.NameCommand;
-import no.ntnu.command.TimeCommand;
-import no.ntnu.command.VersionCommand;
+
+import no.ntnu.command.*;
 
 
 /**
@@ -49,6 +45,7 @@ public class DatagramHandler {
     commandRegistry.put("name", new NameCommand());
     commandRegistry.put("date", new DateCommand());
     commandRegistry.put("time", new TimeCommand());
+    commandRegistry.put("change", new ChangeStateCommand());
   }
 
   /**
