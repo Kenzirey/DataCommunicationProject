@@ -1,5 +1,4 @@
 package no.ntnu.server;
-
 import no.ntnu.greenhouse.GreenhouseSimulator;
 
 import java.io.IOException;
@@ -19,6 +18,7 @@ public class MainClientTester {
 
   static Server server;
   private static final String SERVER_ADDRESS = "localhost";
+  private static final int SERVER_PORT = 12346;
 
   public static void main(String[] args) {
 
@@ -37,6 +37,7 @@ public class MainClientTester {
 
     // using scanner to get keyboard input
     Scanner scanner = new Scanner(System.in);
+    sendCommandToServer("time");
 
     // loop which is permanently true til exit
     while (true) {
@@ -54,25 +55,22 @@ public class MainClientTester {
 
     scanner.close();
   }
+  private static void sendCommandToServer(String command) {
+    try (DatagramSocket socket = new DatagramSocket()) {
+      byte[] buffer = command.getBytes(StandardCharsets.UTF_8);
+      DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), SERVER_PORT);
+      socket.send(packet);
 
-    private static void sendCommandToServer (String command){
-      try (DatagramSocket socket = new DatagramSocket()) {
-        byte[] buffer;
+      // Receive response
+      byte[] receiveBuffer = new byte[1024];
+      DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+      socket.receive(receivePacket);
 
-        buffer = command.getBytes(StandardCharsets.UTF_8);
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(SERVER_ADDRESS), server.getServerPort());
-        socket.send(packet);
-
-        // Response
-        byte[] receiveBuffer = new byte[1024];
-        DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
-        socket.receive(receivePacket);
-
-        String received = new String(receivePacket.getData(), 0, receivePacket.getLength(), StandardCharsets.UTF_8);
-        System.out.println("Received: " + received);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      String received = new String(receivePacket.getData(), 0, receivePacket.getLength(), StandardCharsets.UTF_8);
+      System.out.println("Received: " + received);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
+}
 

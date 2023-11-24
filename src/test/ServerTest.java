@@ -17,7 +17,7 @@ class ServerTest {
   Server server;
   @BeforeEach
     void setUp() {
-    this.server = new Server(12346, new GreenhouseSimulator(false));
+    this.server = new Server(12346);
     }
 
 

@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
-import no.ntnu.greenhouse.GreenhouseSimulator;
 
 /**
  * A UDP server that listens for incoming datagram packets.
@@ -23,7 +23,9 @@ public class Server extends Thread {
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
   private DatagramSocket udpSocket;
+  private final byte[] buffer = new byte[1024];
   private ServerSocket serverSocket;
+  private final DatagramSocket socket;
   private static final String SERVER_STOPPING = "Server is shutting down..";
 
   /**
@@ -44,10 +46,11 @@ public class Server extends Thread {
    * which opens a DatagramSocket to listen for incoming packets.
    */
   public Server(int serverPort) {
-    this.controlPanelLogic = new ControlPanelLogic();
-    this.udpChannel = new UdpCommunicationChannel(controlPanelLogic, "localhost", serverPort);
-    this.controlPanelLogic.setCommunicationChannel(udpChannel);
-    this.udpChannel.open();
+    try {
+      socket = new DatagramSocket(serverPort);
+    } catch (SocketException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -57,23 +60,15 @@ public class Server extends Thread {
   @Override
   public void run() {
     running = true;
-    synchronized (this) {
-      isReady = true;
-      notifyAll();
-    }
-    
-      running = true;
-
-    while (running && !udpChannel.isSocketClosed()) {
+//&& !udpChannel.isSocketClosed()
+    while (running ) {
+      DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
       try {
-        DatagramPacket packet = udpChannel.receivePacket();
-        if (packet == null) {
-          throw new NullPointerException("Packet is null");
-        }
-        handleRequest(new String(
-                packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8), packet);
+        socket.receive(packet);
+        String received = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
+        handleRequest(received, packet);
       } catch (IOException e) {
-        if (!running || udpChannel.isSocketClosed()) {
+        if (!running) {
           break;
         }
         System.err.println("Error processing packet: " + e.getMessage());
@@ -84,7 +79,7 @@ public class Server extends Thread {
     //Prevents multiple threads from executing sections of code at the same time,
     //with shared resources (socket).
     synchronized (this) {
-      udpChannel.closeSocket();
+      this.socket.close();
       notifyAll();
       //Had problems with server trying to receive packets on a closed socket.
       System.out.println("Socket closed.");
@@ -116,7 +111,7 @@ public class Server extends Thread {
       return;
     }
     //Handles the command received in the packet from client.
-    DatagramHandler handler = new DatagramHandler(udpChannel.getSocket(), packet);
+    DatagramHandler handler = new DatagramHandler(socket, packet);
     handler.run();
   }
 
@@ -125,7 +120,7 @@ public class Server extends Thread {
    */
   public void shutdown() {
     this.running = false;
-    this.udpChannel.closeSocket();
+    this.socket.close();
     System.out.println(SERVER_STOPPING);
   }
 
