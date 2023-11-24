@@ -34,7 +34,6 @@ UDP's simplicity allows for these small packets of data to be sent without the o
 
 ### The port number(s):
 * 12346 - used for communication between sensor/actuator nodes and control-panel nodes.
-* Server has a getter method for the port number, which can be used by other classes.
 
 ## The architecture
 Emma write this part
