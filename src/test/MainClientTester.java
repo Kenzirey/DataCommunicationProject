@@ -21,6 +21,9 @@ public class MainClientTester {
   private static final int SERVER_PORT = 12346;
 
   public static void main(String[] args) {
+    server = new Server(SERVER_PORT);
+    server.start();
+
 
 
 
