@@ -3,8 +3,6 @@ package no.ntnu.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
@@ -16,15 +14,12 @@ import no.ntnu.controlpanel.UdpCommunicationChannel;
  */
 public class UdpCommServer extends Thread {
   private volatile boolean isReady = false;
-
-  //TODO: implement logic to allow adding multiple clients?
   private static int SERVER_PORT = 12346;
   private UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
-  private DatagramSocket udpSocket;
   private final byte[] buffer = new byte[1024];
-  private ServerSocket serverSocket;
+  private DatagramSocket udpSocket;
   private static final String SERVER_STOPPING = "Server is shutting down..";
 
   /**
@@ -34,7 +29,7 @@ public class UdpCommServer extends Thread {
    */
   public static void main(String[] args) {
     // Create the server instance with the test listener
-    final Server server = new Server(SERVER_PORT);
+    UdpCommServer server = new UdpCommServer(SERVER_PORT);
     server.start();
     System.out.println("Server started on port " + SERVER_PORT);
 
@@ -120,7 +115,9 @@ public class UdpCommServer extends Thread {
    */
   public void shutdown() {
     this.running = false;
-    this.udpSocket.close();
+    if (this.udpChannel != null && this.udpChannel.getSocket() != null && !this.udpChannel.isSocketClosed()) {
+      this.udpChannel.getSocket().close();
+    }
     System.out.println(SERVER_STOPPING);
   }
 
@@ -151,6 +148,10 @@ public class UdpCommServer extends Thread {
     this.udpChannel = testChannel;
   }
 
+  public UdpCommServer getServer() {
+    return this;
+  }
+
 
   private boolean openListeningSocket() {
     boolean success = false;
@@ -164,9 +165,6 @@ public class UdpCommServer extends Thread {
     return success;
   }
 
-  public UdpCommServer getServer() {
-    return this;
-  }
 
 
 }

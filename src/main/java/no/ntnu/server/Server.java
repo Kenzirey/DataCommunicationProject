@@ -25,7 +25,7 @@ public class Server extends Thread {
   private DatagramSocket udpSocket;
   private final byte[] buffer = new byte[1024];
   private ServerSocket serverSocket;
-  private final DatagramSocket socket;
+  private DatagramSocket socket;
   private static final String SERVER_STOPPING = "Server is shutting down..";
 
   /**
@@ -60,7 +60,6 @@ public class Server extends Thread {
   @Override
   public void run() {
     running = true;
-//&& !udpChannel.isSocketClosed()
     while (running ) {
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
       try {

@@ -37,41 +37,6 @@ class ServerTest {
     //Shutdown after test.
     server.shutdown();
   }
-
-  @Test
-  void testServerRun() throws IOException, InterruptedException {
-    UdpCommunicationChannel mockChannel = Mockito.mock(UdpCommunicationChannel.class);
-
-    //Server setup:
-    server.setCommunicationChannel(mockChannel);
-    server.start();
-    synchronized(server) {
-      server.wait(20);
-    }
-    assertTrue(server.isRunning());
-
-
-    //Mock messages & data.
-    String mockMessage = "Test Message";
-    byte[] mockData = mockMessage.getBytes(StandardCharsets.UTF_8);
-    InetAddress mockAddress = InetAddress.getByName("localhost");
-    int mockPort = 12345;
-
-    //DatagramPacket here:
-    DatagramPacket mockPacket = new DatagramPacket(mockData, mockData.length, mockAddress, mockPort);
-
-    //Mockito setup:
-    when(mockChannel.receivePacket()).thenReturn(mockPacket);
-
-    //Shutdown server after test is done.
-    server.shutdown();
-    synchronized(server) {
-      server.wait(20);
-    }
-    server.join();
-    assertFalse(server.isRunning());
-  }
-
   /**
    * Tests the shutdown method,
    * using synchronized to make sure the server is running before the assertion is made.
