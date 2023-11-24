@@ -1,5 +1,5 @@
-package no.ntnu.server;
 import no.ntnu.greenhouse.GreenhouseSimulator;
+import no.ntnu.server.Server;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -22,18 +22,7 @@ public class MainClientTester {
 
   public static void main(String[] args) {
 
-    server = new Server(12346); // Adjust the port and parameters as needed
-    server.start();
-    System.out.println("Server started.");
-    synchronized (server) {
-      while (!server.isReady()) {
-        try {
-          server.wait(); // Wait until the server calls notifyAll()
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+
 
     // using scanner to get keyboard input
     Scanner scanner = new Scanner(System.in);
@@ -50,7 +39,7 @@ public class MainClientTester {
       }
       System.out.println("test");
       sendCommandToServer(command);
-      System.out.println(command + "sent");
+      System.out.println(command + " sent");
     }
 
     scanner.close();

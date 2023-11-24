@@ -18,6 +18,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
   private InetAddress serverAddress;
   private int serverPort;
   //TODO: Document why socketClosed is used.
+  //TODO: connect to server?
   private volatile boolean socketClosed = false;
 
   /**
