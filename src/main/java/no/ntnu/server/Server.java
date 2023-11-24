@@ -2,6 +2,7 @@ package no.ntnu.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import no.ntnu.controlpanel.ControlPanelLogic;
@@ -21,6 +22,7 @@ public class Server extends Thread {
   private UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
+  private DatagramSocket udpSocket;
   private ServerSocket serverSocket;
   private static final String SERVER_STOPPING = "Server is shutting down..";
   private final GreenhouseSimulator greenhouseSimulator;
@@ -61,6 +63,8 @@ public class Server extends Thread {
       isReady = true;
       notifyAll();
     }
+    
+      running = true;
 
     while (running && !udpChannel.isSocketClosed()) {
       try {
@@ -68,8 +72,6 @@ public class Server extends Thread {
         if (packet == null) {
           throw new NullPointerException("Packet is null");
         }
-
-
         handleRequest(new String(
                 packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8), packet);
       } catch (IOException e) {
@@ -160,7 +162,7 @@ public class Server extends Thread {
   private boolean openListeningSocket() {
     boolean success = false;
     try {
-      serverSocket = new ServerSocket(SERVER_PORT);
+      udpSocket = new DatagramSocket(SERVER_PORT);
       System.out.println("Server listening to port " + SERVER_PORT);
       success = true;
     } catch (IOException e) {

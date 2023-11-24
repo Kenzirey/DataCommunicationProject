@@ -4,6 +4,7 @@ import no.ntnu.controlpanel.CommunicationChannel;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.FakeCommunicationChannel;
 import no.ntnu.controlpanel.SocketCommunicationChannel;
+import no.ntnu.controlpanel.UdpCommunicationChannel;
 import no.ntnu.gui.controlpanel.ControlPanelApplication;
 import no.ntnu.tools.Logger;
 
@@ -14,6 +15,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -24,10 +28,10 @@ import java.net.Socket;
 public class ControlPanelStarter {
   private final boolean fake;
   private static final String SERVER_HOST = "localhost";
+  private static final int UDP_PORT = 12346;
+  private InetAddress serverIP;
   private Socket socket;
-  private BufferedReader socketReader;
-  private ObjectOutputStream objectWriter;
-
+  private DatagramSocket udpSocket;
 
   public ControlPanelStarter(boolean fake) {
     this.fake = fake;
@@ -71,12 +75,14 @@ public class ControlPanelStarter {
 
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
     try {
-      socket = new Socket(SERVER_HOST, 12346);
-      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      objectWriter = new ObjectOutputStream(socket.getOutputStream());
+      UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,SERVER_HOST,UDP_PORT);
+      logic.setCommunicationChannel(udpCommunicationChannel);
+      udpSocket = new DatagramSocket();
+      serverIP = InetAddress.getByName(SERVER_HOST);
+      return udpCommunicationChannel;
 
-      return new SocketCommunicationChannel(logic, socket, socketReader, objectWriter);
     } catch (IOException e) {
+
       e.printStackTrace();
       return null;
     }
