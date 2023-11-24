@@ -50,7 +50,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
    * @throws IOException input/output exception.
    */
   public DatagramPacket receivePacket() throws IOException {
-    //TODO: Discuss buffer size, is this enough? Or too much?
+    //TODO: use ByteBuffer instead.
     byte[] buffer = new byte[1024];
     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
     socket.receive(packet);

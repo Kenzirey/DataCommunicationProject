@@ -1,6 +1,6 @@
-package no.ntnu.client;
+package no.ntnu.server;
 
-import no.ntnu.server.Server;
+import no.ntnu.greenhouse.GreenhouseSimulator;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,18 +9,34 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * A dummy client for testing various commands.
+ * Sends a command to the server, and prints the response. Makes sure the server is running correctly.
  */
 public class MainClientTester {
 
-  private static Server server;
+  static Server server;
   private static final String SERVER_ADDRESS = "localhost";
 
   public static void main(String[] args) {
+
+    server = new Server(12346, new GreenhouseSimulator(false)); // Adjust the port and parameters as needed
+    server.start();
+    System.out.println("Server started.");
+    synchronized (server) {
+      while (!server.isReady()) {
+        try {
+          server.wait(); // Wait until the server calls notifyAll()
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
 
     sendCommandToServer("time");
 
     sendCommandToServer("name");
   }
+
+
 
   private static void sendCommandToServer(String command) {
     try (DatagramSocket socket = new DatagramSocket()) {

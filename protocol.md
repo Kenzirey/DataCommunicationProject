@@ -34,6 +34,7 @@ UDP's simplicity allows for these small packets of data to be sent without the o
 
 ### The port number(s):
 * 12346 - used for communication between sensor/actuator nodes and control-panel nodes.
+* Server has a getter method for the port number, which can be used by other classes.
 
 ## The architecture
 Emma write this part
@@ -66,17 +67,19 @@ In addition, each packet has the standard response per request, and is not alter
 
 ## Types, constants
 
-TODO - Do you have some specific value types you use in several messages? They you can describe 
+TODO ROBERT - Do you have some specific value types you use in several messages? They you can describe 
 them here.
 
 ## Message format
 
-TODO - describe the general format of all messages. Then describe specific format for each 
+TODO ROBERT - describe the general format of all messages. Then describe specific format for each 
 message type in your protocol.
+* 
 
 ### Error messages
 
 TODO - describe the possible error messages that nodes can send in your system.
+
 
 ## An example scenario
 

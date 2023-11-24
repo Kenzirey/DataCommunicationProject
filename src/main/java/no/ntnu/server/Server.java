@@ -14,9 +14,10 @@ import no.ntnu.greenhouse.GreenhouseSimulator;
  * and send a response back to the client.
  */
 public class Server extends Thread {
+  private volatile boolean isReady = false;
 
   //TODO: implement logic to allow adding multiple clients?
-  private static final int SERVER_PORT = 12346;
+  private static int SERVER_PORT = 12346;
   private UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
@@ -30,12 +31,10 @@ public class Server extends Thread {
    * @param args command line arguments.
    */
   public static void main(String[] args) {
-    // Simple implementation of ServerMessageListener for testing
-
-
     // Create the server instance with the test listener
     final Server server = new Server(SERVER_PORT, new GreenhouseSimulator(false));
     server.start();
+    System.out.println("Server started on port " + SERVER_PORT);
 
   }
 
@@ -58,6 +57,10 @@ public class Server extends Thread {
   @Override
   public void run() {
     running = true;
+    synchronized (this) {
+      isReady = true;
+      notifyAll();
+    }
 
     while (running && !udpChannel.isSocketClosed()) {
       try {
@@ -65,6 +68,7 @@ public class Server extends Thread {
         if (packet == null) {
           throw new NullPointerException("Packet is null");
         }
+
 
         handleRequest(new String(
                 packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8), packet);
@@ -85,6 +89,10 @@ public class Server extends Thread {
       //Had problems with server trying to receive packets on a closed socket.
       System.out.println("Socket closed.");
     }
+  }
+
+  public synchronized  boolean isReady() {
+    return isReady;
   }
 
 
@@ -159,6 +167,10 @@ public class Server extends Thread {
       System.err.println("Could not open a listening port");
     }
     return success;
+  }
+
+  public Server getServer() {
+    return this;
   }
 
 
