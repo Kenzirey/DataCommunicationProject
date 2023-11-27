@@ -9,8 +9,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 /**
- * A different attempt at a client.
- * Will delete this, because communication channel is the client.
+ * Used to test that the connection to server is working as intended.
  */
 public class EchoClient {
   private final DatagramSocket socket;

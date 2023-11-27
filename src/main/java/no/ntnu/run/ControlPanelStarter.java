@@ -147,7 +147,12 @@ public class ControlPanelStarter {
         if (socket != null) {
           socket.close();
           System.out.println("Socket closed");
-        } else {
+        }
+        if (udpSocket != null) {
+          udpSocket.close();
+          System.out.println("UDP socket closed");
+        }
+        else {
           System.err.println("Can't close a socket which has not been open");
         }
       } catch (IOException e) {
