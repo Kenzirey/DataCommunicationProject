@@ -74,23 +74,6 @@ public class ControlPanelStarter {
   }
 
 
-  /**
-  private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
-    try {
-      UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,SERVER_HOST,UDP_PORT);
-      logic.setCommunicationChannel(udpCommunicationChannel);
-      udpSocket = new DatagramSocket();
-      serverIP = InetAddress.getByName(SERVER_HOST);
-      return udpCommunicationChannel;
-
-    } catch (IOException e) {
-
-      e.printStackTrace();
-      return null;
-    }
-  }
-   */
-
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
     if (initializeDatagramSocket()) {
       UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,
@@ -113,7 +96,6 @@ public class ControlPanelStarter {
     }
     return success;
   }
-
 
   private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
     // Here we pretend that some events will be received with a given delay
@@ -160,5 +142,4 @@ public class ControlPanelStarter {
       }
     }
 
-    //TODO TEST THIS
   }
