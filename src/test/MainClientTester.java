@@ -1,5 +1,7 @@
+import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.Server;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,9 +24,6 @@ public class MainClientTester {
     server = new Server(SERVER_PORT);
     server.start();
 
-
-
-
     // using scanner to get keyboard input
     Scanner scanner = new Scanner(System.in);
     sendCommandToServer("time");
@@ -38,7 +37,6 @@ public class MainClientTester {
         System.out.println("exited the scanner");
         break;
       }
-      System.out.println("test");
       sendCommandToServer(command);
       System.out.println(command + " sent");
     }
