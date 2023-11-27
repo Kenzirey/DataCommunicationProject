@@ -73,6 +73,8 @@ public class ControlPanelStarter {
     return channel;
   }
 
+
+  /**
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
     try {
       UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,SERVER_HOST,UDP_PORT);
@@ -86,6 +88,30 @@ public class ControlPanelStarter {
       e.printStackTrace();
       return null;
     }
+  }
+   */
+
+  private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
+    if (initializeDatagramSocket()) {
+      UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,
+              serverIP.getHostName(),UDP_PORT);
+      logic.setCommunicationChannel(udpCommunicationChannel);
+      return udpCommunicationChannel;
+    } else {
+      return null;
+    }
+  }
+
+  private boolean initializeDatagramSocket() {
+    boolean success = false;
+    try {
+      udpSocket = new DatagramSocket();
+      serverIP = InetAddress.getByName(SERVER_HOST);
+      success = true;
+    } catch (IOException e) {
+      System.err.println("Could not create a UDP socket: " + e.getMessage());
+    }
+    return success;
   }
 
 
