@@ -10,34 +10,26 @@ public class GetValueCommand implements Command {
     /*
     Command Example
     getValue, NodeID, SensorID
-    changeState on fan 3
+    value 2 3
      */
     @Override
     public String execute(String[] args) {
+        String[] commandParts = args[0].split(" ", 2);
         GreenhouseSimulator gs = GreenhouseSimulator.getInstance(true);
-        SensorActuatorNode node = getElementsFromString.getNodeFromString(args[2], gs);
-        assert node != null;
-        Sensor sensor = getElementsFromString.getSensorFromString(args[3], node);
+        SensorActuatorNode node = getElementsFromString.getNodeFromString(commandParts[0], gs);
 
-        if (node != null && sensor != null) {
-            SensorReading reading = sensor.getReading();
+        if (node != null) {
+            Sensor sensor = getElementsFromString.getSensorFromString(commandParts[1], node);
 
-            System.out.printf("Reading from Sensor ID %s on Node %s: %s %s",
-                    args[2], args[1], sensor.getType(), sensor.getReading().getValue());
+            if (sensor != null) {
+                SensorReading reading = sensor.getReading();
 
+                System.out.printf("Reading from Sensor ID %s on Node %s: %s %s",
+                        commandParts[1], commandParts[0], sensor.getType(), reading.getValue());
+
+            }
+            return "Command succesfully executed!";
         }
-
-        return "Current date: " + java.time.LocalDate.now();
-    }
-
-    // Just a tester not needed in the real application
-    public static void main(String[] args) {
-        ChangeStateCommand c = new ChangeStateCommand();
-        args = new String[4];
-        args[0] = "change";
-        args[1] = "on";
-        args[2] = "1";
-        args[3] = "3";
-        c.execute(args);
+        return "Command failed!";
     }
 }
