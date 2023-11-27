@@ -7,7 +7,6 @@ import no.ntnu.controlpanel.SocketCommunicationChannel;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
 import no.ntnu.gui.controlpanel.ControlPanelApplication;
 import no.ntnu.tools.Logger;
-import no.ntnu.gui.greenhouse.GreenhouseApplication;
 
 import java.io.BufferedReader;
 import java.io.DataInput;
@@ -74,23 +73,20 @@ public class ControlPanelStarter {
     return channel;
   }
 
-
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
-
-    UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,SERVER_HOST,UDP_PORT);
-    logic.setCommunicationChannel(udpCommunicationChannel);
     try {
+      UdpCommunicationChannel udpCommunicationChannel = new UdpCommunicationChannel(logic,SERVER_HOST,UDP_PORT);
+      logic.setCommunicationChannel(udpCommunicationChannel);
       udpSocket = new DatagramSocket();
       serverIP = InetAddress.getByName(SERVER_HOST);
       return udpCommunicationChannel;
+
     } catch (IOException e) {
 
       e.printStackTrace();
       return null;
     }
   }
-
-
 
 
   private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
@@ -132,4 +128,6 @@ public class ControlPanelStarter {
         System.err.println("Could not close the socket: " + e.getMessage());
       }
     }
+
+    //TODO TEST THIS
   }

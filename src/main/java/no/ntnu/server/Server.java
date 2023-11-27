@@ -59,7 +59,6 @@ public class Server extends Thread {
    */
   @Override
   public void run() {
-
     running = true;
     while (running ) {
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length);

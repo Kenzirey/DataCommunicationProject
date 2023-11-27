@@ -52,9 +52,8 @@ public class UdpCommServer extends Thread {
    */
   @Override
   public void run() {
-    if (openListeningSocket()) {
-      running = true;
-    }
+    running = true;
+
     while (running && !udpChannel.isSocketClosed()) {
       try {
         DatagramPacket packet = udpChannel.receivePacket();
@@ -161,7 +160,7 @@ public class UdpCommServer extends Thread {
       System.out.println("Server listening to port " + SERVER_PORT);
       success = true;
     } catch (IOException e) {
-      System.err.println("Could not open a listening port" + e.getMessage());
+      System.err.println("Could not open a listening port");
     }
     return success;
   }
