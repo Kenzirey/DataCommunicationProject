@@ -86,6 +86,8 @@ class UdpCommServerTest {
    */
   @Test
   void testShutdown() throws InterruptedException {
+    server.start();
+
     //Synchronized to make sure the server is running before the assertion is made.
     synchronized(server) {
       server.wait(5);
