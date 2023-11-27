@@ -1,6 +1,8 @@
+import no.ntnu.client.EchoClient;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
 import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.Server;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,11 +17,19 @@ import static org.mockito.Mockito.when;
 
 class ServerTest {
   Server server;
+  EchoClient client = new EchoClient("localhost", 12346);
   @BeforeEach
     void setUp() {
     this.server = new Server(12346);
     }
 
+  @AfterEach
+    void tearDown() throws InterruptedException {
+    if (server.isRunning()) {
+      server.shutdown();
+      server.join();
+    }
+    }
 
 
   //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
@@ -34,9 +44,19 @@ class ServerTest {
     }
     assertTrue(server.isRunning());
 
-    //Shutdown after test.
+    //Shutdown after test.z
     server.shutdown();
   }
+
+  @Test
+  public void sendAndReceivePackets() {
+    this.server.start();
+    String echo = client.sendAndReceive("name");
+    assertEquals("UDP Server", echo);
+    echo = client.sendAndReceive("server is working");
+    assertNotEquals("test", echo);
+  }
+
   /**
    * Tests the shutdown method,
    * using synchronized to make sure the server is running before the assertion is made.
@@ -45,20 +65,21 @@ class ServerTest {
    */
   @Test
   void testShutdown() throws InterruptedException {
-    server.start();
+    if (!server.isRunning()) {
+      server.start();
+    }
 
-    //Synchronized to make sure the server is running before the assertion is made.
-    synchronized(server) {
+    synchronized (server) {
       server.wait(20);
     }
     assertTrue(server.isRunning());
 
     server.shutdown();
-    //To make sure shutdown is run before next assertion.
-    synchronized(server) {
+
+    synchronized (server) {
       server.wait(20);
     }
-    server.join();
     assertFalse(server.isRunning());
   }
+
 }

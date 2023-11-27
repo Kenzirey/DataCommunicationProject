@@ -1,6 +1,7 @@
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
 import no.ntnu.server.UdpCommServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -28,21 +29,23 @@ class UdpCommServerTest {
     this.server.start();
   }
 
+  @AfterEach
+  void tearDown() throws InterruptedException {
+    if (server.isRunning()) {
+      server.shutdown();
+      server.join();
+    }
+  }
+
 
 
   //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
   @Test
-  void testServerInitialization() throws InterruptedException {
+  void testServerInitialization() {
     //Makes sure port is correctly displayed/gathered.
     assertEquals(12346, server.getServerPort());
-    //Makes sure the server is actually running.
-    synchronized(server) {
-      server.wait(20);
-    }
-    assertTrue(server.isRunning());
 
-    //Shutdown after test.
-    server.shutdown();
+    assertTrue(server.isRunning());
   }
 
   @Test
@@ -86,8 +89,6 @@ class UdpCommServerTest {
    */
   @Test
   void testShutdown() throws InterruptedException {
-    server.start();
-
     //Synchronized to make sure the server is running before the assertion is made.
     synchronized(server) {
       server.wait(5);

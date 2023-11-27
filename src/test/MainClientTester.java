@@ -1,7 +1,5 @@
-import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.Server;
 
-import java.io.IOException;
 import java.util.Scanner;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
