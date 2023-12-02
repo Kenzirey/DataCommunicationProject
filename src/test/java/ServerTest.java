@@ -15,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests the old Server class (before UDPCommChannel implementation).
+ */
 class ServerTest {
   Server server;
   EchoClient client = new EchoClient("localhost", 12346);
@@ -35,7 +38,9 @@ class ServerTest {
   //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
   @Test
   void testServerInitialization() throws InterruptedException {
-    this.server.start();
+    if (!server.isRunning()) {
+      this.server.start();
+    }
     //Makes sure port is correctly displayed/gathered.
     assertEquals(12346, server.getServerPort());
     //Makes sure the server is actually running.
@@ -49,7 +54,7 @@ class ServerTest {
   }
 
   @Test
-  public void sendAndReceivePackets() {
+  void sendAndReceivePackets() {
     this.server.start();
     String echo = client.sendAndReceive("name");
     assertEquals("UDP Server", echo);

@@ -1,14 +1,11 @@
-import no.ntnu.greenhouse.GreenhouseSimulator;
+package no.ntnu.client;
 import no.ntnu.server.Server;
 
-import java.io.IOException;
 import java.util.Scanner;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 /**
  * A dummy client for testing various commands.
@@ -21,8 +18,12 @@ public class MainClientTester {
   private static final int SERVER_PORT = 12346;
 
   public static void main(String[] args) {
+
     server = new Server(SERVER_PORT);
     server.start();
+
+
+
 
     // using scanner to get keyboard input
     Scanner scanner = new Scanner(System.in);
@@ -35,8 +36,10 @@ public class MainClientTester {
 
       if ("exit".equalsIgnoreCase(command)) {
         System.out.println("exited the scanner");
+        server.shutdown();
         break;
       }
+      System.out.println("test");
       sendCommandToServer(command);
       System.out.println(command + " sent");
     }
