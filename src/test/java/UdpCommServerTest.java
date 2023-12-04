@@ -37,9 +37,6 @@ class UdpCommServerTest {
     }
   }
 
-
-
-  //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
   @Test
   void testServerInitialization() {
     //Makes sure port is correctly displayed/gathered.

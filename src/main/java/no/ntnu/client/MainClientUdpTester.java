@@ -9,8 +9,6 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
 public class MainClientUdpTester {
-
-  static UdpCommServer server;
   private static final String SERVER_ADDRESS = "localhost";
   private static final int SERVER_PORT = 12346;
   private static UdpCommunicationChannel udpChannel;
@@ -36,6 +34,7 @@ public class MainClientUdpTester {
         System.out.println("Exiting the scanner...");
         server.shutdown();
         udpChannel.closeSocket();
+        server.shutdown();
         break;
       }
 
