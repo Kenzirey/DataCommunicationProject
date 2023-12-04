@@ -31,6 +31,7 @@ public class GreenhouseSimulator {
    */
   public GreenhouseSimulator(boolean fake) {
     this.fake = fake;
+    instance = this;
   }
 
   /**
@@ -122,9 +123,13 @@ public class GreenhouseSimulator {
 
   //needed to retrieve the instance of the Greenhouse
   public static GreenhouseSimulator getInstance(boolean fake) {
+    System.out.println("getInstance");
     if (instance == null) {
+      System.out.println("newInstance");
       instance = new GreenhouseSimulator(fake);
     }
+    System.out.println("Instance has Nodes: ");
+    System.out.println(instance.getNodes());
     return instance;
   }
 }
