@@ -1,19 +1,10 @@
 import no.ntnu.client.EchoClient;
-import no.ntnu.controlpanel.UdpCommunicationChannel;
-import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.server.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests the old Server class (before UDPCommChannel implementation).
@@ -34,8 +25,6 @@ class ServerTest {
     }
     }
 
-
-  //TODO: PACKET IS STILL NULL FFFFFFFFFFFFFFFFFF.
   @Test
   void testServerInitialization() throws InterruptedException {
     if (!server.isRunning()) {
