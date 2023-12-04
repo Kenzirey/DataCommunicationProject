@@ -30,12 +30,12 @@ public class DatagramHandler {
    * Initializes a new instance of the DatagramHandler class,
    * with UDP socket and client.
    *
-   * @param udpSocket the UDP socket used for sending and receiving data.
+   * @param socket the socket used for sending and receiving data.
    *
    * @param clientDatagram the incoming datagram from the client.
    */
-  public DatagramHandler(DatagramSocket udpSocket, DatagramPacket clientDatagram) {
-    this.dataSocket = udpSocket;
+  public DatagramHandler(DatagramSocket socket, DatagramPacket clientDatagram) {
+    this.dataSocket = socket;
     this.clientDatagram = clientDatagram;
 
     this.commandRegistry = new HashMap<>();

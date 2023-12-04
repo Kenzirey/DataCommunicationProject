@@ -105,7 +105,7 @@ public class Server extends Thread {
       DatagramPacket responseDatagram = new DatagramPacket(responseData, responseData.length,
               packet.getAddress(), packet.getPort());
 
-      udpChannel.sendPacket(responseDatagram);
+      //udpChannel.sendPacket(responseDatagram);
       running = false;
       return;
     }

@@ -2,7 +2,6 @@ package no.ntnu.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.nio.charset.StandardCharsets;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.UdpCommunicationChannel;
@@ -13,14 +12,10 @@ import no.ntnu.controlpanel.UdpCommunicationChannel;
  * and send a response back to the client.
  */
 public class UdpCommServer extends Thread {
-  private volatile boolean isReady = false;
   private static int SERVER_PORT = 12346;
   private UdpCommunicationChannel udpChannel;
   private ControlPanelLogic controlPanelLogic;
   private boolean running;
-  private final byte[] buffer = new byte[1024];
-  private DatagramSocket udpSocket;
-  private static final String SERVER_STOPPING = "Server is shutting down..";
 
   /**
    * Creates an instance of server with a default port and listener.
@@ -28,9 +23,8 @@ public class UdpCommServer extends Thread {
    * @param args command line arguments.
    */
   public static void main(String[] args) {
-    // Create the server instance with the test listener
-    UdpCommServer server = new UdpCommServer(SERVER_PORT);
-    server.start();
+    //UdpCommServer server = new UdpCommServer(SERVER_PORT);
+    //server.start();
     System.out.println("Server started on port " + SERVER_PORT);
 
   }
@@ -40,10 +34,29 @@ public class UdpCommServer extends Thread {
    * which opens a DatagramSocket to listen for incoming packets.
    */
   public UdpCommServer(int serverPort) {
-    this.controlPanelLogic = new ControlPanelLogic();
-    this.udpChannel = new UdpCommunicationChannel(controlPanelLogic, "localhost", serverPort);
-    this.controlPanelLogic.setCommunicationChannel(udpChannel);
-    this.udpChannel.open();
+    try {
+      this.controlPanelLogic = new ControlPanelLogic();
+      this.udpChannel = new UdpCommunicationChannel(controlPanelLogic, "localhost", serverPort);
+      this.controlPanelLogic.setCommunicationChannel(udpChannel);
+      this.udpChannel.open();
+    } catch (RuntimeException e) {
+      System.err.println("Failed to initialize UdpCommChannel " + e.getMessage());
+      setRunning(false);
+    }
+  }
+
+  /**
+   * To ensure the shared variable, running,
+   * is handled in a thread-safe manner.
+   *
+   * @param value true/false.
+   */
+  private synchronized void setRunning(boolean value) {
+    this.running = value;
+  }
+
+  public synchronized boolean isRunning() {
+    return this.running;
   }
 
   /**
@@ -52,39 +65,26 @@ public class UdpCommServer extends Thread {
    */
   @Override
   public void run() {
-    running = true;
+    setRunning(true);
+    System.out.println("System is running and listening for packets on " + SERVER_PORT);
 
-    while (running && !udpChannel.isSocketClosed()) {
+    while (isRunning() && udpChannel.isSocketClosed()) {
       try {
+        System.out.println("Waiting for packet");
         DatagramPacket packet = udpChannel.receivePacket();
         if (packet == null) {
-          throw new NullPointerException("Packet is null");
+          System.out.println("Received a null packet, continuing...");
+          continue;
         }
+        System.out.println("Received a packet, processing...");
+
         handleRequest(new String(
                 packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8), packet);
-      } catch (IOException e) {
-        if (!running || udpChannel.isSocketClosed()) {
-          break;
+      } catch (Exception e) {
+        System.err.println("Error with Udp Server " + e.getMessage());
         }
-        System.err.println("Error processing packet: " + e.getMessage());
-      }
-    }
-    //TODO: Document synchronized in protocol.md.
-    //Synchronized is used to ensure closing of the UDP socket in a "thread-safe manner".
-    //Prevents multiple threads from executing sections of code at the same time,
-    //with shared resources (socket).
-    synchronized (this) {
-      udpChannel.closeSocket();
-      notifyAll();
-      //Had problems with server trying to receive packets on a closed socket.
-      System.out.println("Socket closed.");
     }
   }
-
-  public synchronized  boolean isReady() {
-    return isReady;
-  }
-
 
   /**
    * Processes incoming requests by checking its content.
@@ -97,12 +97,12 @@ public class UdpCommServer extends Thread {
    */
   private void handleRequest(String message, DatagramPacket packet) throws IOException {
     if ("end".equals(message.trim())) {
-      byte[] responseData = SERVER_STOPPING.getBytes(StandardCharsets.UTF_8);
+      byte[] responseData = shutdownMessage().getBytes(StandardCharsets.UTF_8);
       DatagramPacket responseDatagram = new DatagramPacket(responseData, responseData.length,
               packet.getAddress(), packet.getPort());
 
       udpChannel.sendPacket(responseDatagram);
-      running = false;
+      setRunning(false);
       return;
     }
     //Handles the command received in the packet from client.
@@ -110,15 +110,23 @@ public class UdpCommServer extends Thread {
     handler.run();
   }
 
+//  private void handleRequest(String message, DatagramPacket packet) throws IOException {
+//    // Echo back the received message
+//    byte[] responseData = message.getBytes(StandardCharsets.UTF_8);
+//    DatagramPacket responseDatagram = new DatagramPacket(
+//            responseData, responseData.length, packet.getAddress(), packet.getPort());
+//
+//    udpChannel.sendPacket(responseDatagram);
+//  }
   /**
    * Shuts down the server.
    */
-  public void shutdown() {
-    this.running = false;
-    if (this.udpChannel != null && this.udpChannel.getSocket() != null && !this.udpChannel.isSocketClosed()) {
-      this.udpChannel.getSocket().close();
+  public synchronized void shutdown() {
+    setRunning(false);
+    if (this.udpChannel != null && this.udpChannel.getSocket() != null && this.udpChannel.isSocketClosed()) {
+      udpChannel.closeSocket();
     }
-    System.out.println(SERVER_STOPPING);
+    System.out.println(shutdownMessage());
   }
 
   /**
@@ -131,15 +139,6 @@ public class UdpCommServer extends Thread {
   }
 
   /**
-   * Returns true if the server is running, false otherwise.
-   *
-   * @return true if the server is running, false otherwise.
-   */
-  public boolean isRunning() {
-    return this.running;
-  }
-
-  /**
    * Sets the communication channel for the test server.
    *
    * @param testChannel the test channel.
@@ -148,23 +147,11 @@ public class UdpCommServer extends Thread {
     this.udpChannel = testChannel;
   }
 
-  public UdpCommServer getServer() {
-    return this;
+  private String shutdownMessage() {
+    return "Server is shutting down..";
   }
 
-
-  private boolean openListeningSocket() {
-    boolean success = false;
-    try {
-      udpSocket = new DatagramSocket(SERVER_PORT);
-      System.out.println("Server listening to port " + SERVER_PORT);
-      success = true;
-    } catch (IOException e) {
-      System.err.println("Could not open a listening port");
-    }
-    return success;
+  public UdpCommunicationChannel getUdpChannel() {
+    return this.udpChannel;
   }
-
-
-
 }

@@ -19,6 +19,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
   private int serverPort;
   //TODO: Document why socketClosed is used.
   //TODO: connect to server?
+  //TODO: Document why we are using a synchronous appraoch.
   private volatile boolean socketClosed = false;
 
   /**
@@ -35,9 +36,7 @@ public class UdpCommunicationChannel implements CommunicationChannel {
     this.serverPort = serverPort;
     try {
       this.serverAddress = InetAddress.getByName(serverIp);
-
-      //System chooses available client port, so not specified here.
-      this.socket = new DatagramSocket();
+      this.socket = new DatagramSocket(serverPort); // Bind socket to serverPort
     } catch (IOException e) {
       throw new RuntimeException("Error setting up UDP socket", e);
     }
@@ -51,10 +50,11 @@ public class UdpCommunicationChannel implements CommunicationChannel {
    * @throws IOException input/output exception.
    */
   public DatagramPacket receivePacket() throws IOException {
-    //TODO: use ByteBuffer instead.
     byte[] buffer = new byte[1024];
     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-    socket.receive(packet);
+    if (!socketClosed) {
+      socket.receive(packet);
+    }
     return packet;
   }
 
@@ -134,8 +134,12 @@ public class UdpCommunicationChannel implements CommunicationChannel {
     }
   }
 
+  /**
+   * Checks if the socket is closed or not.
+   *
+   * @return true if socket is not closed, false if it is closed.
+   */
   public boolean isSocketClosed() {
-    return this.socketClosed;
+    return !this.socketClosed;
   }
-  //TODO: separate thread or listener for the sending and receiving?
 }
