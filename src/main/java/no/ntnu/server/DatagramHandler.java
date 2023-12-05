@@ -47,6 +47,7 @@ public class DatagramHandler {
     commandRegistry.put("time", new TimeCommand());
     commandRegistry.put("change", new ChangeStateCommand());
     commandRegistry.put("value", new GetValueCommand());
+    commandRegistry.put("help", new HelpCommand());
   }
 
   /**
