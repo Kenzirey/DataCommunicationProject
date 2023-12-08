@@ -69,11 +69,16 @@ In addition, each packet has the standard response per request, and is not alter
 TODO ROBERT - Do you have some specific value types you use in several messages? They you can describe 
 them here.
 
+We use the specific value type LocalTime, but the output gets always converted to Strings, which makes the communication easier.
+
 ## Message format
 
 TODO ROBERT - describe the general format of all messages. Then describe specific format for each 
 message type in your protocol.
-* 
+
+First there is a message which says that its recieving a packet, afterwards its specifies the command which the client sends.
+The next message is that the server is waiting for the packet. And the last is that the server recieves the message and gives the response.
+
 
 ### Error messages
 
