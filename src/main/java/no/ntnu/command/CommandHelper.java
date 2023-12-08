@@ -6,7 +6,6 @@ public class CommandHelper {
     public static String getCommandHelp(String command) {
         return switch (command.toLowerCase()) {
             case "version" -> "Returns the version of the software. Example command: version";
-            case "echo" -> "Echoes a message. Example command: echo Hello, World!";
             case "name" -> "Returns the name of the application. Example command: name";
             case "date" -> "Returns the current date. Example command: date";
             case "time" -> "Returns the current time. Example command: time";
