@@ -48,6 +48,8 @@ TODO - describe what each network node does and when. Some periodic events? Some
 incoming packets? Perhaps split into several subsections, where each subsection describes one 
 node type (For example: one subsection for sensor/actuator nodes, one for control panel nodes).
 
+Commands are getting send to the nodes which distribute it to the sensors / actuators of the nodes.
+So our nodes are a collection of sensors and actuators, and are responsible for the control of those.
 ## Connection and state
 
 #### Connection-less
